@@ -7,4 +7,4 @@ class Scene:
         pass
 
     def get_tile(self, x: int, y: int) -> Tile:
-        return Tile(glyph='X')
+        return Tile(glyph=str(y)[0], bg_color=(255,0,255))
