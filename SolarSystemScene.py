@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 import random
 
+from InputState import InputState
 from Tile import Tile
 from Scene import Scene
 import math
@@ -40,12 +41,13 @@ class Planet:
 
 class SolarSystemScene(Scene):
 
-    def __init__(self, stars: list[Star] | None = None, planets: list[Planet] | None = None):
+    def __init__(self, input_state: InputState, stars: list[Star] | None = None, planets: list[Planet] | None = None):
         super().__init__()
         self.stars = stars if stars is not None else []
         self.planets = planets if planets is not None else []
         self.empty_space_glyph = ' '
         self.distant_star_glyph = '.'
+        self.input_state = input_state
 
     def get_tile(self, x: int, y: int) -> Tile:
         for star in self.stars:
@@ -67,6 +69,9 @@ class SolarSystemScene(Scene):
             return Tile(glyph=self.distant_star_glyph, bg_color=(0,0,0), fg_color=(100,100,random.randint(0,100)))
         else:
             return Tile(glyph=self.empty_space_glyph, bg_color=(0,0,0))
-            
+
+
+    def tick():
+        pass
             
     

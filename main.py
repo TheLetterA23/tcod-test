@@ -12,11 +12,14 @@ from SolarSystemScene import SolarSystemScene, Star, Planet
 from Tile import Tile
 from InputState import InputState
 
-TICK_TIME = 1
+TICK_TIME = 1/60
 TICK_COUNTER = 0
 
-def make_test_scene() -> SolarSystemScene:
-    return SolarSystemScene([Star(0,0,4)], [ Planet(
+TEST_CAMERA_X = 0 
+TEST_CAMERA_Y = 0 
+
+def make_test_scene(input_state: InputState) -> SolarSystemScene:
+    return SolarSystemScene(input_state, [Star(0,0,4)], [ Planet(
                 orbit_radius=5,
                 x=5,
                 y=0,
@@ -75,8 +78,16 @@ def handle_events(input_state: InputState) -> None:
 
         input_state.process_event(event=event)
         
-def run_tick(tick_counter: int):
-    pass
+def run_tick(tick_counter: int, input_state: InputState):
+    global TEST_CAMERA_X
+    global TEST_CAMERA_Y
+    commands = input_state.consume_commands()
+
+    for command in commands:
+        if command[0] == 'move':
+            print("asdasd")
+            TEST_CAMERA_X += command[1]
+            TEST_CAMERA_Y += command[2]
 
 def main() -> None:
     global TICK_COUNTER
@@ -88,8 +99,8 @@ def main() -> None:
     console = tcod.console.Console(80, 50)
     console.print(0, 0, "Hello World")  # Test text by printing "Hello World" to the console
 
-    scene = make_test_scene()
     input_state = InputState()
+    scene = make_test_scene(input_state)
 
     FLAGS = tcod.context.SDL_WINDOW_RESIZABLE | tcod.context.SDL_WINDOW_MAXIMIZED
     with tcod.context.new(console=console, tileset=tileset, sdl_window_flags=FLAGS) as context:
@@ -97,7 +108,7 @@ def main() -> None:
         
         while True:
             console.clear()
-            draw_scene(scene=scene, console=console, world_x = -20, world_y = -20)
+            draw_scene(scene=scene, console=console, world_x = -20 + TEST_CAMERA_X, world_y = -20 + TEST_CAMERA_Y)
             context.present(console)
             handle_events(input_state)
 
@@ -105,11 +116,10 @@ def main() -> None:
             frame_time = now - previous_time
 
             while frame_time >= TICK_TIME:
-                run_tick(TICK_COUNTER)
+                run_tick(TICK_COUNTER, input_state)
                 frame_time -= TICK_TIME
                 TICK_COUNTER += 1
-
-            previous_time = now
+                previous_time = now
 
 
 
